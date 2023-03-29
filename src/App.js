@@ -1,23 +1,55 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
+import { Table, } from 'react-bootstrap';
+
+
 import './App.css';
+import axios from 'axios';
+
+const BASE_URL = "http://192.168.1.8:5000"
 
 function App() {
+  const [data, setData] = useState()
+  const [dataIcons, setDataIcons] = useState()
+
+  useEffect(() => {
+    axios.get(`${BASE_URL}/fetch-exchanges`)
+      .then(response => {
+        setData(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    axios.get(`${BASE_URL}/fetch-exchanges-icon`)
+      .then(response => {
+        setDataIcons(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+
+  }, []);
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div> Exchange Data </div>
+      <Table size='sm' striped bordered hover responsive style={{ fontSize: "clamp(10px, 1.5vw, 16px)" }}>
+
+        <tbody>
+          {data.map((data, index) => (
+            <tr key={`${index}`}>
+              <td>{index + 1}</td>
+              <td>{data.exchange_id}</td>
+              <td>{data.website}</td>
+              <td>{data.name}</td>
+              <td>{data.data_symbols_count}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+
     </div>
   );
 }
